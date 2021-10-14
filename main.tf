@@ -5,20 +5,36 @@ provider "aws" {
 resource "aws_vpc" "vpc" {
   cidr_block           = var.vpc-cidr
   enable_dns_hostnames = true
+  tags = {
+    Project = "Tech Test"
+    Owner = "Anusha"
+  }
 }
 
 resource "aws_subnet" "public-subnet" {
   vpc_id            = aws_vpc.vpc.id
   cidr_block        = var.subnet-cidr-public
   availability_zone = "${var.region}a"
+  tags = {
+    Project = "Tech Test"
+    Owner = "Anusha"
+  }
 }
 
 resource "aws_route_table" "public-subnet-route-table" {
   vpc_id = aws_vpc.vpc.id
+  tags = {
+    Project = "Tech Test"
+    Owner = "Anusha"
+  }
 }
 
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.vpc.id
+  tags = {
+    Project = "Tech Test"
+    Owner = "Anusha"
+  }
 }
 
 resource "aws_route" "public-subnet-route" {
@@ -33,7 +49,7 @@ resource "aws_route_table_association" "public-subnet-route-table-association" {
 }
 
 resource "aws_key_pair" "web" {
-  public_key = file(pathexpand(var.public_key))
+  public_key = sensitive(file(pathexpand(var.public_key)))
 }
 
 resource "aws_instance" "web-instance" {
@@ -43,6 +59,10 @@ resource "aws_instance" "web-instance" {
   subnet_id                   = aws_subnet.public-subnet.id
   associate_public_ip_address = true
   key_name                    = aws_key_pair.web.key_name
+  tags = {
+    Project = "Tech Test"
+    Owner = "Anusha"
+  }
   user_data                   = <<EOF
 #!/bin/sh
 yum install -y nginx
@@ -72,6 +92,10 @@ resource "aws_security_group" "web-instance-security-group" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+  tags = {
+    Project = "Tech Test"
+    Owner = "Anusha"
   }
 }
 
