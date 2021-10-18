@@ -83,7 +83,7 @@ resource "aws_route_table_association" "private-subnet-route-table-association" 
 }
 
 #Associate Bastion subnet to route table
-resource "aws_route_table_association" "public-subnet-route-table-association1" {
+resource "aws_route_table_association" "public-subnet-route-table-associations" {
   subnet_id      = aws_subnet.public_subnet.id
   route_table_id = aws_route_table.public-subnet-route-table.id
 }
@@ -160,7 +160,7 @@ resource "aws_security_group" "bastion-EC2-SSH-group" {
 #Create launch configuration template for autoscaling group
 resource "aws_launch_configuration" "launch-configuration" {
   name                        = "Nginx-Config-Template"
-  image_id                    = "ami-50c0ea46"
+  image_id                    = var.imageid
   instance_type               = "t2.small"
   security_groups             = [aws_security_group.web-instance-security-group.id, aws_security_group.bastion-EC2-SSH-group.id]
   associate_public_ip_address = true
@@ -192,10 +192,10 @@ resource "aws_autoscaling_group" "autoscalling_group_config" {
 
 #Create bastion EC2 instance
 resource "aws_instance" "Bastion-Host" {
-  ami           = "ami-50c0ea46"
-  instance_type = "t2.small"
-  subnet_id     = aws_subnet.public_subnet.id
-  key_name = aws_key_pair.web.key_name
+  ami                    = var.imageid
+  instance_type          = "t2.small"
+  subnet_id              = aws_subnet.public_subnet.id
+  key_name               = aws_key_pair.web.key_name
   vpc_security_group_ids = [aws_security_group.bastion-security-group.id]
   tags = {
     Name    = "Bastion_Host_From_Terraform"
@@ -203,3 +203,4 @@ resource "aws_instance" "Bastion-Host" {
     Owner   = "Anusha"
   }
 }
+
