@@ -190,17 +190,31 @@ resource "aws_autoscaling_group" "autoscalling_group_config" {
   }
 }
 
-#Create bastion EC2 instance
-resource "aws_instance" "Bastion-Host" {
-  ami                    = var.imageid
-  instance_type          = "t2.small"
-  subnet_id              = aws_subnet.public_subnet.id
-  key_name               = aws_key_pair.web.key_name
-  vpc_security_group_ids = [aws_security_group.bastion-security-group.id]
-  tags = {
-    Name    = "Bastion_Host_From_Terraform"
-    Project = "Tech Test"
-    Owner   = "Anusha"
+#Create Bastion launch configuration template for autoscaling group
+resource "aws_launch_configuration" "Bastion-launch-configuration" {
+  name                        = "Bastion-Config-Template"
+  image_id                    = var.imageid
+  instance_type               = "t2.small"
+  security_groups             = [aws_security_group.bastion-security-group.id]
+  associate_public_ip_address = true
+  key_name                    = aws_key_pair.web.key_name
+}
+
+#Create Bastion autoscaling group
+resource "aws_autoscaling_group" "bastion-autoscalling_group_config" {
+  name                      = "Bastion_autoscale_group"
+  max_size                  = 1
+  min_size                  = 1
+  health_check_grace_period = 300
+  health_check_type         = "EC2"
+  desired_capacity          = 1
+  force_delete              = true
+  vpc_zone_identifier       = [aws_subnet.public_subnet.id]
+
+  launch_configuration = aws_launch_configuration.Bastion-launch-configuration.name
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
