@@ -26,13 +26,16 @@ step2:
 	Clone the repository git clone https://github.com/Anusha2605/terraform-aws-tech-test.git
 	Go to the root of the directory which is terraform-aws-tech-test
 	Run the below commands:
-		1. terraform init
-		2. (for dublin region)
+		1. Export the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY for you ID in aws.
+			export AWS_ACCESS_KEY_ID=<access key>
+			export AWS_SECRET_ACCESS_KEY=<secret key>
+		2. terraform init
+		3. (for dublin region)
 			tera plan -var-file=dublin.tfvars -var "public_key=<path to the public key>"
 			example public key path: C:\Users\Admin\Documents\terraform-aws-tech-test\AnushaECS.pub"
 			(for virginia region)
 			tera plan -var-file=virginia.tfvars -var "public_key=<path to the public key>"
-		3. (for dublin region)
+		4. (for dublin region)
 			tera apply -var-file=dublin.tfvars -var "public_key=<path to the public key>"
 			example public key path: C:\Users\Admin\Documents\terraform-aws-tech-test\AnushaECS.pub"
 			(for virginia region)
